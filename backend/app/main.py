@@ -28,3 +28,4 @@ def health_check():
             "status": "error",
             "database": "disconnected"
         }
+
