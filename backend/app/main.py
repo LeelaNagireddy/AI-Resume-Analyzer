@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from app.database import engine
 
 app = FastAPI(
     title="AI Resume Analyzer API",
@@ -16,6 +17,14 @@ def root():
 
 @app.get("/health")
 def health_check():
-    return {
-        "status": "ok"
-    }
+    try:
+        with engine.connect() as connection:
+            return {
+                "status": "ok",
+                "database": "connected"
+            }
+    except Exception:
+        return {
+            "status": "error",
+            "database": "disconnected"
+        }
