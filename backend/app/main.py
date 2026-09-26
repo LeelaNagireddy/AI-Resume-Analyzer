@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine
 from app.api.resume import router as resume_router
+from app.api.jd import router as jd_router
 
 app = FastAPI(
     title="AI Resume Analyzer API",
@@ -18,6 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(resume_router)
+app.include_router(jd_router)
 
 @app.get("/")
 def root():
