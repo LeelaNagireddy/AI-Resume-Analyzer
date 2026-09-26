@@ -3,6 +3,7 @@ import os
 import shutil
 
 from app.services.resume_parser import extract_resume_text
+from app.services.skill_extractor import extract_skills
 
 router = APIRouter()
 
@@ -19,9 +20,11 @@ async def upload_resume(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     extracted_text = extract_resume_text(file_path)
+    skills = extract_skills(extracted_text)
 
     return {
         "filename": file.filename,
         "message": "Resume uploaded successfully",
-        "text": extracted_text
+        "text": extracted_text,
+	"skills": skills
     }
