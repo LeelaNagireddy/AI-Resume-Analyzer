@@ -1,5 +1,6 @@
 import pymupdf
 from docx import Document
+import io
 
 
 def extract_text_from_pdf(file_path: str) -> str:
@@ -38,5 +39,36 @@ def extract_resume_text(file_path: str) -> str:
 
     if file_path.lower().endswith(".docx"):
         return extract_text_from_docx(file_path)
+
+    raise ValueError("Unsupported file format. Use PDF or DOCX.")
+
+
+def extract_text_from_pdf_bytes(data: bytes) -> str:
+    """Extract text from PDF bytes (nothing is written to disk)."""
+
+    with pymupdf.open(stream=data, filetype="pdf") as document:
+        text = "".join(page.get_text() for page in document)
+
+    return text.strip()
+
+
+def extract_text_from_docx_bytes(data: bytes) -> str:
+    """Extract text from DOCX bytes (nothing is written to disk)."""
+
+    document = Document(io.BytesIO(data))
+
+    text = "\n".join(paragraph.text for paragraph in document.paragraphs)
+
+    return text.strip()
+
+
+def extract_resume_text_from_bytes(data: bytes, extension: str) -> str:
+    """Extract resume text from uploaded bytes, based on the file extension."""
+
+    if extension == ".pdf":
+        return extract_text_from_pdf_bytes(data)
+
+    if extension == ".docx":
+        return extract_text_from_docx_bytes(data)
 
     raise ValueError("Unsupported file format. Use PDF or DOCX.")
